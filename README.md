@@ -36,6 +36,8 @@ yarn install
 ```
 PORT=3000
 NODE_ENV=development
+DATABASE_URL="postgresql://username:password@localhost:5432/realworld?schema=public"
+JWT_SECRET="your-secret-key-here"
 ```
 
 4. Start the development server
