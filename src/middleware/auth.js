@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
+const redis_client = require("../config/redis")
 
 const prisma = new PrismaClient();
 
@@ -17,6 +18,13 @@ const auth = async (req, res, next) => {
 
     const token = authHeader.split(' ')[1];
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+    const storedToken = await redis_client.get(decoded.id.toString());
+
+    if (!storedToken | storedToken !== token) {
+      return res.status(401).json({ errors: { body: ["Invalid or expired token"] } });
+    }
+
     const user = await prisma.user.findUnique({
       where: { userId: decoded.id }
     });
@@ -43,16 +51,14 @@ const optional = async (req, res, next) => {
     if (authHeader && authHeader.startsWith('Token ')) {
       const token = authHeader.split(' ')[1];
       const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      
-      const user = await prisma.user.findUnique({
-        where: { userId: decoded.id }
-      });
 
-      if (user) {
-        req.user = user;
+      const storedToken = await redis_client.get(decoded.id.toString());
+      
+      if (storedToken === token) {
+        req.user = await prisma.user.findUnique({ where: { userId: decoded.id } });
       }
     }
-    next();
+    next(); // proceed whether authenticated or not
   } catch (error) {
     next();
   }

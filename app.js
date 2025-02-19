@@ -23,6 +23,7 @@ app.use((err, req, res, next) => {
 });
 
 app.use('/api/users', require('./src/routes/users'));
+app.use('/api/profiles', require('./src/routes/profiles'));
 
 
 // Start server
