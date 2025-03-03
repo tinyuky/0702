@@ -18,7 +18,7 @@ const userResponse = (user, token) => ({
 const register = async (req, res) => {
     try {
       const { username, email, password } = req.body;
-      
+      console.log(req.body);
       const existedEmailUser = await prisma.user.findUnique({ where: { email } });
       
       if (existedEmailUser) {

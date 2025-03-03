@@ -24,7 +24,7 @@ app.use((err, req, res, next) => {
 
 app.use('/api/users', require('./src/routes/users'));
 app.use('/api/profiles', require('./src/routes/profiles'));
-
+app.use('/api/tags', require('./src/routes/tags'));
 
 // Start server
 const PORT = process.env.PORT || 3000;
